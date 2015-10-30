@@ -1,0 +1,133 @@
+
+
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _aureliaDependencyInjection = require('aurelia-dependency-injection');
+
+var _aureliaEventAggregator = require('aurelia-event-aggregator');
+
+var _aureliaLogging = require('aurelia-logging');
+
+var LogManager = _interopRequireWildcard(_aureliaLogging);
+
+var Analytics = (function () {
+	function Analytics(EventAggregator) {
+		_classCallCheck(this, _Analytics);
+
+		this.eventAggregator = EventAggregator;
+		this.initialized = false;
+		this.logger = LogManager.getLogger('analytics');
+		this.shouldLog = false;
+		this.shouldTrack = false;
+	}
+
+	_createClass(Analytics, [{
+		key: 'attach',
+		value: function attach() {
+			var _this = this;
+
+			if (!this.initialized) {
+				if (this.shouldLog) {
+					this.logger.error("Analytics must be initialized before use.");
+				}
+				throw new Error("Analytics must be initialized before use.");
+			}
+
+			this.eventAggregator.subscribe('router:navigation:success', function (payload) {
+				return _this.track(payload.instruction.fragment, payload.instruction.config.title);
+			});
+		}
+	}, {
+		key: 'enableLogging',
+		value: function enableLogging(value) {
+			this.shouldLog = value;
+		}
+	}, {
+		key: 'enableTracking',
+		value: function enableTracking(value) {
+			this.shouldTrack = value;
+		}
+	}, {
+		key: 'init',
+		value: function init(id) {
+			var tracker = arguments.length <= 1 || arguments[1] === undefined ? 'ga' : arguments[1];
+
+			switch (tracker) {
+				case 'ga':
+					if (this.initialized) {
+						return;
+					}
+					if (this.shouldTrack) {
+						gaTracker(id);
+						this.initialized = true;
+					}
+					break;
+				default:
+					if (this.shouldLog) {
+						this.logger.warn('init: tracker \'' + tracker + '\' is not recognized');
+					}
+					return;
+			}
+
+			if (this.shouldTrack && this.shouldLog) {
+				this.logger.debug('init: initialized tracker \'' + tracker + '\', id \'' + id + '\'');
+			}
+		}
+	}, {
+		key: 'isInitialized',
+		value: function isInitialized() {
+			return this.initialized;
+		}
+	}, {
+		key: 'track',
+		value: function track(path, title) {
+			if (!this.shouldTrack) {
+				return;
+			}
+			if (!this.initialized) {
+				if (this.shouldLog) {
+					this.logger.warn("Try calling init() before calling 'track()'.");
+				}
+				return;
+			}
+
+			if (this.shouldLog) {
+				this.logger.debug('track: path = \'' + path + '\', title = \'' + title + '\'');
+			}
+			gaTrack(path, title);
+		}
+	}]);
+
+	var _Analytics = Analytics;
+	Analytics = (0, _aureliaDependencyInjection.inject)(_aureliaEventAggregator.EventAggregator)(Analytics) || Analytics;
+	return Analytics;
+})();
+
+exports.Analytics = Analytics;
+
+function gaTracker(id) {
+	var script = document.createElement('script');
+	script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" + "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," + "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)" + "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');";
+	document.querySelector('body').appendChild(script);
+
+	window.ga = window.ga || function () {
+		(ga.q = ga.q || []).push(arguments);
+	};ga.l = +new Date();
+	ga('create', id, 'auto');
+	ga('send', 'pageview');
+}
+
+function gaTrack(path, title) {
+	ga('set', { page: path, title: title });
+	ga('send', 'pageview');
+}
