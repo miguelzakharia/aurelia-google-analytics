@@ -3,7 +3,7 @@ An Aurelia plugin that adds Google Analytics page tracking to your application w
 
 This plugin was built based on [this](https://mjau-mjau.com/blog/ajax-universal-analytics/) blog post.
 
-## Get Started
+## Getting Started
 
 * Install aurelia-google-analytics
 
@@ -30,19 +30,19 @@ export function configure(aurelia) {
 
 ## Building from source
 
-* Install dependencies
+Install dependencies
 
 ```shell
 npm install
 ```
 
-* Then
+Then
 
 ```shell
 gulp build
 ```
 
-* The result is 3 module formats separated by folder in `dist/`.
+The result is 3 module formats separated by folder in `dist/`.
 
   ## Dependencies
 
