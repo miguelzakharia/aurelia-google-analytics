@@ -44,7 +44,7 @@ gulp build
 
 The result is 3 module formats separated by folder in `dist/`.
 
-  ## Dependencies
+## Dependencies
 
 * [aurelia-dependency-injection](https://github.com/aurelia/dependency-injection)
 * [aurelia-event-aggregator](https://github.com/aurelia/event-aggregator)
