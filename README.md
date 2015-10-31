@@ -52,6 +52,7 @@ The result is 3 module formats separated by folder in `dist/`.
 * [aurelia-dependency-injection](https://github.com/aurelia/dependency-injection)
 * [aurelia-event-aggregator](https://github.com/aurelia/event-aggregator)
 * [aurelia-logging](https://github.com/aurelia/logging)
+* [aurelia-router](https://github.com/aurelia/router) _implicit dependency because this plugin listens to the router:navigation:success event_
 
 ## Pull Requests
 
