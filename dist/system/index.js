@@ -12,9 +12,6 @@ System.register(['./analytics'], function (_export) {
 				configCallback(instance);
 			}
 
-			if (instance.isInitialized()) {
-				instance.attach();
-			}
 			aurelia.singleton(instance);
 		} catch (err) {
 			console.error("configure: %o", err);

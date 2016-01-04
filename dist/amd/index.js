@@ -13,9 +13,6 @@ define(['exports', './analytics'], function (exports, _analytics) {
 				configCallback(instance);
 			}
 
-			if (instance.isInitialized()) {
-				instance.attach();
-			}
 			aurelia.singleton(instance);
 		} catch (err) {
 			console.error("configure: %o", err);
