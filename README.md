@@ -19,17 +19,32 @@ jspm install aurelia-google-analytics
 ```javascript
 export function configure(aurelia) {
     aurelia.use
-        .standardConfiguration()
-        .developmentLogging()
+        //...
         .plugin('aurelia-google-analytics', config => {
-			config.enableTracking(true); // Set to `false` to disable in non-production environments.
-			config.enableLogging(false); // Set to `true` to have some log messages appear in the browser console.
-			config.init('<your GA Tracking ID here>', 'ga');
+			config.init('<Your Tracker ID>');
+			config.attach({
+				logging: {
+					enabled: true // Set to `true` to have some log messages appear in the browser console.
+				},
+				pageTracking: {
+					enabled: true // Set to `false` to disable in non-production environments.
+				},
+				clickTracking: {
+					enabled: true, // Set to `false` to disable in non-production environments.
+					filter: (element) => {
+						// This can contain any logic to determine which elements to track.
+						return element instanceof HTMLElement &&
+							(element.nodeName.toLowerCase() === 'a' ||
+							element.nodeName.toLowerCase() === 'button');
+					}
+				}
 		});
 
     aurelia.start().then(a => a.setRoot());
 }
 ```
+
+In order to use the click tracking feature, each HTML element you want to track must contain a `data-analytics-category` and `data-analytics-action` attribute. `data-analytics-label` is supported and optional.
 
 ## Building from source
 
