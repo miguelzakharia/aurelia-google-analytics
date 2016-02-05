@@ -2,11 +2,7 @@
 
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-	value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+exports.__esModule = true;
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 
@@ -80,104 +76,94 @@ var Analytics = (function () {
 		this._trackPage = this._trackPage.bind(this);
 	}
 
-	_createClass(Analytics, [{
-		key: 'attach',
-		value: function attach() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? defaultOptions : arguments[0];
+	Analytics.prototype.attach = function attach() {
+		var options = arguments.length <= 0 || arguments[0] === undefined ? defaultOptions : arguments[0];
 
-			this._options = Object.assign({}, defaultOptions, options);
-			if (!this._initialized) {
-				var errorMessage = "Analytics must be initialized before use.";
-				this._log('error', errorMessage);
-				throw new Error(errorMessage);
-			}
-
-			this._attachClickTracker();
-			this._attachPageTracker();
+		this._options = Object.assign({}, defaultOptions, options);
+		if (!this._initialized) {
+			var errorMessage = "Analytics must be initialized before use.";
+			this._log('error', errorMessage);
+			throw new Error(errorMessage);
 		}
-	}, {
-		key: 'init',
-		value: function init(id) {
-			var script = document.createElement('script');
-			script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" + "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," + "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)" + "})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');";
-			document.querySelector('body').appendChild(script);
 
-			window.ga = window.ga || function () {
-				(ga.q = ga.q || []).push(arguments);
-			};ga.l = +new Date();
-			ga('create', id, 'auto');
-			ga('send', 'pageview');
+		this._attachClickTracker();
+		this._attachPageTracker();
+	};
 
-			this._initialized = true;
+	Analytics.prototype.init = function init(id) {
+		var script = document.createElement('script');
+		script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" + "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," + "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)" + "})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');";
+		document.querySelector('body').appendChild(script);
+
+		window.ga = window.ga || function () {
+			(ga.q = ga.q || []).push(arguments);
+		};ga.l = +new Date();
+		ga('create', id, 'auto');
+
+		this._initialized = true;
+	};
+
+	Analytics.prototype._attachClickTracker = function _attachClickTracker() {
+		if (!this._options.clickTracking.enabled) {
+			return;
 		}
-	}, {
-		key: '_attachClickTracker',
-		value: function _attachClickTracker() {
-			if (!this._options.clickTracking.enabled) {
-				return;
-			}
 
-			document.querySelector('body').addEventListener('click', delegate(this._options.clickTracking.filter, this._trackClick));
+		document.querySelector('body').addEventListener('click', delegate(this._options.clickTracking.filter, this._trackClick));
+	};
+
+	Analytics.prototype._attachPageTracker = function _attachPageTracker() {
+		var _this = this;
+
+		if (!this._options.pageTracking.enabled) {
+			return;
 		}
-	}, {
-		key: '_attachPageTracker',
-		value: function _attachPageTracker() {
-			var _this = this;
 
-			if (!this._options.pageTracking.enabled) {
-				return;
-			}
+		this._eventAggregator.subscribe('router:navigation:success', function (payload) {
+			return _this._trackPage(payload.instruction.fragment, payload.instruction.config.title);
+		});
+	};
 
-			this._eventAggregator.subscribe('router:navigation:success', function (payload) {
-				return _this._trackPage(payload.instruction.fragment, payload.instruction.config.title);
-			});
+	Analytics.prototype._log = function _log(level, message) {
+		if (!this._options.logging.enabled) {
+			return;
 		}
-	}, {
-		key: '_log',
-		value: function _log(level, message) {
-			if (!this._options.logging.enabled) {
-				return;
-			}
 
-			this._logger[level](message);
+		this._logger[level](message);
+	};
+
+	Analytics.prototype._trackClick = function _trackClick(evt) {
+		if (!this._initialized) {
+			this._log('warn', "The component has not been initialized. Please call 'init()' before calling 'attach()'.");
+			return;
 		}
-	}, {
-		key: '_trackClick',
-		value: function _trackClick(evt) {
-			if (!this._initialized) {
-				this._log('warn', "The component has not been initialized. Please call 'init()' before calling 'attach()'.");
-				return;
-			}
-			if (!evt || !evt.delegateTarget || !criteria.hasTrackingInfo(evt.delegateTarget)) {
-				return;
-			};
+		if (!evt || !evt.delegateTarget || !criteria.hasTrackingInfo(evt.delegateTarget)) {
+			return;
+		};
 
-			var element = evt.delegateTarget;
-			var tracking = {
-				category: element.getAttribute('data-analytics-category'),
-				action: element.getAttribute('data-analytics-action'),
-				label: element.getAttribute('data-analytics-label')
-			};
+		var element = evt.delegateTarget;
+		var tracking = {
+			category: element.getAttribute('data-analytics-category'),
+			action: element.getAttribute('data-analytics-action'),
+			label: element.getAttribute('data-analytics-label')
+		};
 
-			this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\'');
-			ga('send', 'event', tracking.category, tracking.action, tracking.label);
+		this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\'');
+		ga('send', 'event', tracking.category, tracking.action, tracking.label);
+	};
+
+	Analytics.prototype._trackPage = function _trackPage(path, title) {
+		this._log('debug', 'Tracking path = ' + path + ', title = ' + title);
+		if (!this._initialized) {
+			this._log('warn', "Try calling 'init()' before calling 'attach()'.");
+			return;
 		}
-	}, {
-		key: '_trackPage',
-		value: function _trackPage(path, title) {
-			this._log('debug', 'Tracking path = ' + path + ', title = ' + title);
-			if (!this._initialized) {
-				this._log('warn', "Try calling 'init()' before calling 'attach()'.");
-				return;
-			}
 
-			ga('set', { page: path, title: title });
-			ga('send', 'pageview');
-		}
-	}]);
+		ga('set', { page: path, title: title });
+		ga('send', 'pageview');
+	};
 
 	var _Analytics = Analytics;
-	Analytics = (0, _aureliaDependencyInjection.inject)(_aureliaEventAggregator.EventAggregator)(Analytics) || Analytics;
+	Analytics = _aureliaDependencyInjection.inject(_aureliaEventAggregator.EventAggregator)(Analytics) || Analytics;
 	return Analytics;
 })();
 

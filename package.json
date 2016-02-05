@@ -1,6 +1,6 @@
 {
   "name": "aurelia-google-analytics",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "An Aurelia plugin that adds Google Analytics page tracking to your application.",
   "keywords": [
     "analytics",
@@ -58,9 +58,9 @@
   },
   "jspm": {
     "main": "index",
-    "format": "es6",
+    "format": "amd",
     "directories": {
-      "lib": "dist/es6"
+      "lib": "dist/amd"
     },
     "dependencies": {
       "aurelia-dependency-injection": "npm:aurelia-dependency-injection@^1.0.0-beta.1",
