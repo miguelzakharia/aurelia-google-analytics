@@ -24,7 +24,10 @@ var defaultOptions = {
 		enabled: false
 	},
 	clickTracking: {
-		enabled: false
+		enabled: false,
+		filter: function filter(element) {
+			return element instanceof HTMLElement && (element.nodeName.toLowerCase() === 'a' || element.nodeName.toLowerCase() === 'button');
+		}
 	}
 };
 
@@ -55,7 +58,7 @@ var delegate = function delegate(criteria, listener) {
 	return function (evt) {
 		var el = evt.target;
 		do {
-			if (!criteria(el)) continue;
+			if (criteria && !criteria(el)) continue;
 			evt.delegateTarget = el;
 			listener.apply(this, arguments);
 			return;

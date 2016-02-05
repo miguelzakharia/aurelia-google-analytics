@@ -23,7 +23,10 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					enabled: false
 				},
 				clickTracking: {
-					enabled: false
+					enabled: false,
+					filter: function filter(element) {
+						return element instanceof HTMLElement && (element.nodeName.toLowerCase() === 'a' || element.nodeName.toLowerCase() === 'button');
+					}
 				}
 			};
 			criteria = {
@@ -53,7 +56,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 				return function (evt) {
 					var el = evt.target;
 					do {
-						if (!criteria(el)) continue;
+						if (criteria && !criteria(el)) continue;
 						evt.delegateTarget = el;
 						listener.apply(this, arguments);
 						return;
