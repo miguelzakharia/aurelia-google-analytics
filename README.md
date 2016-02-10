@@ -18,9 +18,7 @@ jspm install aurelia-google-analytics
 
 ```javascript
 export function configure(aurelia) {
-    aurelia.use
-        //...
-        .plugin('aurelia-google-analytics', config => {
+    aurelia.use.plugin('aurelia-google-analytics', config => {
 			config.init('<Your Tracker ID>');
 			config.attach({
 				logging: {
@@ -30,16 +28,10 @@ export function configure(aurelia) {
 					enabled: true // Set to `false` to disable in non-production environments.
 				},
 				clickTracking: {
-					enabled: true, // Set to `false` to disable in non-production environments.
-					filter: (element) => {
-						// This can contain any logic to determine which elements to track.
-						return element instanceof HTMLElement &&
-							(element.nodeName.toLowerCase() === 'a' ||
-							element.nodeName.toLowerCase() === 'button');
-					}
+					enabled: true // Set to `false` to disable in non-production environments.
 				}
 		});
-
+		
     aurelia.start().then(a => a.setRoot());
 }
 ```

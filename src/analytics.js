@@ -23,7 +23,7 @@ import * as LogManager from 'aurelia-logging';
 				},
 				clickTracking: {
 					enabled: true,
-					filter: () => {
+					filter: (element) => {
 						return element instanceof HTMLElement &&
 						(element.nodeName.toLowerCase() === 'a' ||
 							element.nodeName.toLowerCase() === 'button');
@@ -41,7 +41,12 @@ const defaultOptions = {
 		enabled: false
 	},
 	clickTracking: {
-		enabled: false
+		enabled: false,
+    filter: (element) => {
+						return element instanceof HTMLElement &&
+						(element.nodeName.toLowerCase() === 'a' ||
+							element.nodeName.toLowerCase() === 'button');
+					}
 	}
 };
 
@@ -72,7 +77,8 @@ const delegate = function(criteria, listener) {
 	return function(evt) {
 		let el = evt.target;
 		do {
-			if(!criteria(el)) continue;
+			if (criteria && !criteria(el))
+        continue;
 			evt.delegateTarget = el;
 			listener.apply(this, arguments);
 			return;
