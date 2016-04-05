@@ -13,7 +13,7 @@ import * as LogManager from 'aurelia-logging';
 
 /*
 .plugin('aurelia-google-analytics', config => {
-			config.init('<Tracker ID here>');
+			config.init('<Tracker ID here>', {'allowLinker': true}, [['require', 'linker']]);
 			config.attach({
 				logging: {
 					enabled: true
@@ -110,7 +110,8 @@ export class Analytics {
 		this._attachPageTracker();
 	}
 
-	init(id) {
+	init(id, options, cmds) {
+		options = options || {};
 		const script = document.createElement('script');
 		script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" +
 			"(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," +
@@ -119,7 +120,10 @@ export class Analytics {
 		document.querySelector('body').appendChild(script);
 
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', id, 'auto');
+		ga('create', id, 'auto', options);
+		for (var cmd of cmds) {
+			ga(cmd[0], cmd[1]);
+		}
 
 		this._initialized = true;
 	}
