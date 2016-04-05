@@ -93,7 +93,8 @@ var Analytics = (function () {
 		this._attachPageTracker();
 	};
 
-	Analytics.prototype.init = function init(id) {
+	Analytics.prototype.init = function init(id, options, cmds) {
+		options = options || {};
 		var script = document.createElement('script');
 		script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" + "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," + "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)" + "})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');";
 		document.querySelector('body').appendChild(script);
@@ -101,7 +102,23 @@ var Analytics = (function () {
 		window.ga = window.ga || function () {
 			(ga.q = ga.q || []).push(arguments);
 		};ga.l = +new Date();
-		ga('create', id, 'auto');
+		ga('create', id, 'auto', options);
+		for (var _iterator = cmds, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+			var _ref;
+
+			if (_isArray) {
+				if (_i >= _iterator.length) break;
+				_ref = _iterator[_i++];
+			} else {
+				_i = _iterator.next();
+				if (_i.done) break;
+				_ref = _i.value;
+			}
+
+			var cmd = _ref;
+
+			ga(cmd[0], cmd[1]);
+		}
 
 		this._initialized = true;
 	};
