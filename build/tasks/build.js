@@ -19,7 +19,8 @@ gulp.task('build-commonjs', function () {
 gulp.task('build-amd', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, compilerOptions, {modules:'amd'})))
-    .pipe(gulp.dest(paths.output + 'amd'));
+    .pipe(gulp.dest(paths.output + 'amd'))
+    .pipe(gulp.dest(paths.output));
 });
 
 gulp.task('build-system', function () {
@@ -31,7 +32,7 @@ gulp.task('build-system', function () {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-es6', 'build-commonjs', 'build-amd', 'build-system'],
+    ['build-commonjs', 'build-amd', 'build-system'],
     callback
   );
 });
