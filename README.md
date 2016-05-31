@@ -10,8 +10,8 @@ This plugin was built based on [this](https://mjau-mjau.com/blog/ajax-universal-
 ```bash
 jspm install aurelia-google-analytics
 
-# In case the above does not work for some reason, the following will work:
-# jspm install aurelia-google-analytics=github:miguelzakharia/aurelia-google-analytics
+# or ...
+npm install aurelia-google-analytics --save
 ```
 
 * Use the plugin in your app's main.js:
