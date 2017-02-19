@@ -8,6 +8,4 @@ module.exports = {
   source: appRoot + '**/*.js',
   output: outputRoot,
   doc:'./doc',
-  e2eSpecsSrc: 'test/e2e/src/*.js',
-  e2eSpecsDist: 'test/e2e/dist/'
 };

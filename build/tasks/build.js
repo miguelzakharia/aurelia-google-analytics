@@ -5,28 +5,29 @@ var paths = require('../paths');
 var compilerOptions = require('../babel-options');
 var assign = Object.assign || require('object.assign');
 
-gulp.task('build-es6', function () {
-  return gulp.src(paths.source)
-    .pipe(gulp.dest(paths.output + 'es6'));
+gulp.task('build-es2015', function () {
+	return gulp.src(paths.source)
+		.pipe(to5(assign({}, compilerOptions.es2015())))
+		.pipe(gulp.dest(paths.output + 'es2015'));
 });
 
 gulp.task('build-commonjs', function () {
-  return gulp.src(paths.source)
-    .pipe(to5(assign({}, compilerOptions, {modules:'common'})))
-    .pipe(gulp.dest(paths.output + 'commonjs'));
+	return gulp.src(paths.source)
+		.pipe(to5(assign({}, compilerOptions.commonjs())))
+		.pipe(gulp.dest(paths.output + 'commonjs'));
 });
 
 gulp.task('build-amd', function () {
-  return gulp.src(paths.source)
-    .pipe(to5(assign({}, compilerOptions, {modules:'amd'})))
-    .pipe(gulp.dest(paths.output + 'amd'))
-    .pipe(gulp.dest(paths.output));
+	return gulp.src(paths.source)
+		.pipe(to5(assign({}, compilerOptions.amd())))
+		.pipe(gulp.dest(paths.output + 'amd'))
+		.pipe(gulp.dest(paths.output));
 });
 
 gulp.task('build-system', function () {
-  return gulp.src(paths.source)
-    .pipe(to5(assign({}, compilerOptions, {modules:'system'})))
-    .pipe(gulp.dest(paths.output + 'system'));
+	return gulp.src(paths.source)
+		.pipe(to5(assign({}, compilerOptions.system())))
+		.pipe(gulp.dest(paths.output + 'system'));
 });
 
 gulp.task('build', function(callback) {

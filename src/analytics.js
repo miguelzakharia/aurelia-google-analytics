@@ -7,8 +7,12 @@
 
 'use strict';
 
-import {inject} from 'aurelia-dependency-injection';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {
+	inject
+} from 'aurelia-dependency-injection';
+import {
+	EventAggregator
+} from 'aurelia-event-aggregator';
 import * as LogManager from 'aurelia-logging';
 
 /*
@@ -42,47 +46,49 @@ const defaultOptions = {
 	},
 	clickTracking: {
 		enabled: false,
-    filter: (element) => {
-						return element instanceof HTMLElement &&
-						(element.nodeName.toLowerCase() === 'a' ||
-							element.nodeName.toLowerCase() === 'button');
-					}
+		filter: function(element) {
+			return element instanceof HTMLElement &&
+				(element.nodeName.toLowerCase() === 'a' ||
+					element.nodeName.toLowerCase() === 'button');
+		}
 	}
 };
 
 const criteria = {
-	isElement: function(e) { return e instanceof HTMLElement; },
-	hasClass: function(cls) {
-		return function(e) {
+	isElement: function (e) {
+		return e instanceof HTMLElement;
+	},
+	hasClass: function (cls) {
+		return function (e) {
 			return criteria.isElement(e) && e.classList.contains(cls);
 		}
 	},
-	hasTrackingInfo: function(e) {
+	hasTrackingInfo: function (e) {
 		return criteria.isElement(e) &&
 			e.hasAttribute('data-analytics-category') &&
 			e.hasAttribute('data-analytics-action');
 	},
-	isOfType: function(e, type) {
+	isOfType: function (e, type) {
 		return criteria.isElement(e) && e.nodeName.toLowerCase() === type.toLowerCase();
 	},
-	isAnchor: function(e) {
+	isAnchor: function (e) {
 		return criteria.isOfType(e, 'a');
 	},
-	isButton: function(e) {
+	isButton: function (e) {
 		return criteria.isOfType(e, 'button');
 	}
 };
 
-const delegate = function(criteria, listener) {
-	return function(evt) {
+const delegate = function (criteria, listener) {
+	return function (evt) {
 		let el = evt.target;
 		do {
 			if (criteria && !criteria(el))
-        continue;
+				continue;
 			evt.delegateTarget = el;
 			listener.apply(this, arguments);
 			return;
-		} while( (el = el.parentNode) );
+		} while ((el = el.parentNode));
 	};
 };
 
@@ -100,7 +106,7 @@ export class Analytics {
 
 	attach(options = defaultOptions) {
 		this._options = Object.assign({}, defaultOptions, options);
-		if(!this._initialized) {
+		if (!this._initialized) {
 			const errorMessage = "Analytics must be initialized before use.";
 			this._log('error', errorMessage);
 			throw new Error(errorMessage);
@@ -118,58 +124,73 @@ export class Analytics {
 			"})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');";
 		document.querySelector('body').appendChild(script);
 
-		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+		window.ga = window.ga || function () {
+			(ga.q = ga.q || []).push(arguments)
+		};
+		ga.l = +new Date;
 		ga('create', id, 'auto');
 
 		this._initialized = true;
 	}
 
 	_attachClickTracker() {
-		if(!this._options.clickTracking.enabled) { return; }
+		if (!this._options.clickTracking.enabled) {
+			return;
+		}
 
 		document.querySelector('body')
 			.addEventListener('click', delegate(this._options.clickTracking.filter, this._trackClick));
 	}
 
 	_attachPageTracker() {
-		if(!this._options.pageTracking.enabled) { return; }
+		if (!this._options.pageTracking.enabled) {
+			return;
+		}
 
 		this._eventAggregator.subscribe('router:navigation:success',
 			payload => this._trackPage(payload.instruction.fragment, payload.instruction.config.title));
 	}
 
 	_log(level, message) {
-		if(!this._options.logging.enabled) { return; }
+		if (!this._options.logging.enabled) {
+			return;
+		}
 
 		this._logger[level](message);
 	}
 
 	_trackClick(evt) {
-		if(!this._initialized) {
+		if (!this._initialized) {
 			this._log('warn', "The component has not been initialized. Please call 'init()' before calling 'attach()'.");
 			return;
 		}
-		if(!evt || !evt.delegateTarget || !criteria.hasTrackingInfo(evt.delegateTarget)) { return };
+		if (!evt || !evt.delegateTarget || !criteria.hasTrackingInfo(evt.delegateTarget)) {
+			return
+		};
 
 		const element = evt.delegateTarget;
 		const tracking = {
 			category: element.getAttribute('data-analytics-category'),
 			action: element.getAttribute('data-analytics-action'),
-			label: element.getAttribute('data-analytics-label')
+			label: element.getAttribute('data-analytics-label'),
+			value: element.getAttribute('data-analytics-value')
 		};
 
-		this._log('debug', `click: category '${tracking.category}', action '${tracking.action}', label '${tracking.label}'`);
-		ga('send', 'event', tracking.category, tracking.action, tracking.label);
+		this._log('debug', `click: category '${tracking.category}', action '${tracking.action}', label '${tracking.label}', value '${tracking.value}'`);
+		ga('send', 'event', tracking.category, tracking.action, tracking.label, tracking.value);
 	}
 
 	_trackPage(path, title) {
 		this._log('debug', `Tracking path = ${path}, title = ${title}`);
-		if(!this._initialized) {
+		if (!this._initialized) {
 			this._log('warn', "Try calling 'init()' before calling 'attach()'.");
 			return;
 		}
 
-		ga('set', { page: path, title: title });
+		ga('set', {
+			page: path,
+			title: title
+		});
 		ga('send', 'pageview');
 	}
 }

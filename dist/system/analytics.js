@@ -1,10 +1,17 @@
-System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging'], function (_export) {
 
-	'use strict';
 
-	var inject, EventAggregator, LogManager, defaultOptions, criteria, delegate, Analytics;
+'use strict';
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging'], function (_export, _context) {
+	"use strict";
+
+	var inject, EventAggregator, LogManager, _dec, _class, defaultOptions, criteria, delegate, Analytics;
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
 
 	return {
 		setters: [function (_aureliaDependencyInjection) {
@@ -64,9 +71,9 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 				};
 			};
 
-			Analytics = (function () {
+			_export('Analytics', Analytics = (_dec = inject(EventAggregator), _dec(_class = function () {
 				function Analytics(eventAggregator) {
-					_classCallCheck(this, _Analytics);
+					_classCallCheck(this, Analytics);
 
 					this._eventAggregator = eventAggregator;
 					this._initialized = false;
@@ -78,7 +85,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 				}
 
 				Analytics.prototype.attach = function attach() {
-					var options = arguments.length <= 0 || arguments[0] === undefined ? defaultOptions : arguments[0];
+					var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
 
 					this._options = Object.assign({}, defaultOptions, options);
 					if (!this._initialized) {
@@ -98,7 +105,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 
 					window.ga = window.ga || function () {
 						(ga.q = ga.q || []).push(arguments);
-					};ga.l = +new Date();
+					};
+					ga.l = +new Date();
 					ga('create', id, 'auto');
 
 					this._initialized = true;
@@ -145,11 +153,12 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					var tracking = {
 						category: element.getAttribute('data-analytics-category'),
 						action: element.getAttribute('data-analytics-action'),
-						label: element.getAttribute('data-analytics-label')
+						label: element.getAttribute('data-analytics-label'),
+						value: element.getAttribute('data-analytics-value')
 					};
 
-					this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\'');
-					ga('send', 'event', tracking.category, tracking.action, tracking.label);
+					this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value);
+					ga('send', 'event', tracking.category, tracking.action, tracking.label, tracking.value);
 				};
 
 				Analytics.prototype._trackPage = function _trackPage(path, title) {
@@ -159,14 +168,15 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 						return;
 					}
 
-					ga('set', { page: path, title: title });
+					ga('set', {
+						page: path,
+						title: title
+					});
 					ga('send', 'pageview');
 				};
 
-				var _Analytics = Analytics;
-				Analytics = inject(EventAggregator)(Analytics) || Analytics;
 				return Analytics;
-			})();
+			}()) || _class));
 
 			_export('Analytics', Analytics);
 		}

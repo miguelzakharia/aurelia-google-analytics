@@ -2,9 +2,37 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.Analytics = undefined;
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	var LogManager = _interopRequireWildcard(_aureliaLogging);
+
+	function _interopRequireWildcard(obj) {
+		if (obj && obj.__esModule) {
+			return obj;
+		} else {
+			var newObj = {};
+
+			if (obj != null) {
+				for (var key in obj) {
+					if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+				}
+			}
+
+			newObj.default = obj;
+			return newObj;
+		}
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
 
 	var defaultOptions = {
 		logging: {
@@ -56,13 +84,13 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 		};
 	};
 
-	var Analytics = (function () {
+	var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inject)(_aureliaEventAggregator.EventAggregator), _dec(_class = function () {
 		function Analytics(eventAggregator) {
-			_classCallCheck(this, _Analytics);
+			_classCallCheck(this, Analytics);
 
 			this._eventAggregator = eventAggregator;
 			this._initialized = false;
-			this._logger = _aureliaLogging.getLogger('analytics-plugin');
+			this._logger = LogManager.getLogger('analytics-plugin');
 			this._options = defaultOptions;
 
 			this._trackClick = this._trackClick.bind(this);
@@ -70,7 +98,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 		}
 
 		Analytics.prototype.attach = function attach() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? defaultOptions : arguments[0];
+			var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
 
 			this._options = Object.assign({}, defaultOptions, options);
 			if (!this._initialized) {
@@ -90,7 +118,8 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 
 			window.ga = window.ga || function () {
 				(ga.q = ga.q || []).push(arguments);
-			};ga.l = +new Date();
+			};
+			ga.l = +new Date();
 			ga('create', id, 'auto');
 
 			this._initialized = true;
@@ -137,11 +166,12 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 			var tracking = {
 				category: element.getAttribute('data-analytics-category'),
 				action: element.getAttribute('data-analytics-action'),
-				label: element.getAttribute('data-analytics-label')
+				label: element.getAttribute('data-analytics-label'),
+				value: element.getAttribute('data-analytics-value')
 			};
 
-			this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\'');
-			ga('send', 'event', tracking.category, tracking.action, tracking.label);
+			this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value);
+			ga('send', 'event', tracking.category, tracking.action, tracking.label, tracking.value);
 		};
 
 		Analytics.prototype._trackPage = function _trackPage(path, title) {
@@ -151,14 +181,13 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 				return;
 			}
 
-			ga('set', { page: path, title: title });
+			ga('set', {
+				page: path,
+				title: title
+			});
 			ga('send', 'pageview');
 		};
 
-		var _Analytics = Analytics;
-		Analytics = _aureliaDependencyInjection.inject(_aureliaEventAggregator.EventAggregator)(Analytics) || Analytics;
 		return Analytics;
-	})();
-
-	exports.Analytics = Analytics;
+	}()) || _class);
 });

@@ -1,10 +1,9 @@
-System.register(['./analytics'], function (_export) {
-	'use strict';
+'use strict';
+
+System.register(['./analytics'], function (_export, _context) {
+	"use strict";
 
 	var Analytics;
-
-	_export('configure', configure);
-
 	function configure(aurelia, configCallback) {
 		try {
 			var instance = aurelia.container.get(Analytics);
@@ -17,6 +16,8 @@ System.register(['./analytics'], function (_export) {
 			console.error("configure: %o", err);
 		}
 	}
+
+	_export('configure', configure);
 
 	return {
 		setters: [function (_analytics) {

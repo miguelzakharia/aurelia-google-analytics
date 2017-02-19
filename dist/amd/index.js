@@ -1,9 +1,10 @@
 define(['exports', './analytics'], function (exports, _analytics) {
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
 	exports.configure = configure;
-
 	function configure(aurelia, configCallback) {
 		try {
 			var instance = aurelia.container.get(_analytics.Analytics);
