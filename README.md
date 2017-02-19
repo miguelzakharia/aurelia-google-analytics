@@ -36,7 +36,7 @@ export function configure(aurelia) {
 }
 ```
 
-In order to use the click tracking feature, each HTML element you want to track must contain a `data-analytics-category` and `data-analytics-action` attribute. `data-analytics-label` is supported and optional.
+In order to use the click tracking feature, each HTML element you want to track must contain a `data-analytics-category` and `data-analytics-action` attribute. `data-analytics-label` and `data-analytics-value` are supported and optional.
 
 ## Building from source
 
