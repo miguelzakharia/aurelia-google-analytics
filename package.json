@@ -40,7 +40,8 @@
     "require-dir": "^0.3.0",
     "run-sequence": "^1.2.2",
     "vinyl-paths": "^2.1.0",
-    "yargs": "^4.8.1"
+    "yargs": "^4.8.1",
+	"conventional-changelog": "^1.1.0"
   },
   "jspm": {
     "main": "index",
