@@ -24,7 +24,10 @@ import deepmerge from 'deepmerge';
 					enabled: true
 				},
 				pageTracking: {
-					enabled: true
+					enabled: true,
+					getTitle: function(payload) {
+						return payload.instruction.config.title;
+					}
 				},
 				clickTracking: {
 					enabled: true,
@@ -43,7 +46,10 @@ const defaultOptions = {
 		enabled: true
 	},
 	pageTracking: {
-		enabled: false
+		enabled: false,
+		getTitle: function(payload) {
+			return payload.instruction.config.title;
+		}
 	},
 	clickTracking: {
 		enabled: false,
@@ -149,7 +155,9 @@ export class Analytics {
 		}
 
 		this._eventAggregator.subscribe('router:navigation:success',
-			payload => this._trackPage(payload.instruction.fragment, payload.instruction.config.title));
+			payload => {
+				this._trackPage(payload.instruction.fragment, this._options.pageTracking.getTitle(payload))
+			});
 	}
 
 	_log(level, message) {
