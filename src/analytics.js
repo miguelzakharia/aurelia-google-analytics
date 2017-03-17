@@ -14,6 +14,7 @@ import {
 	EventAggregator
 } from 'aurelia-event-aggregator';
 import * as LogManager from 'aurelia-logging';
+import deepmerge from 'deepmerge';
 
 /*
 .plugin('aurelia-google-analytics', config => {
@@ -105,7 +106,7 @@ export class Analytics {
 	}
 
 	attach(options = defaultOptions) {
-		this._options = Object.assign({}, defaultOptions, options);
+		this._options = deepmerge(defaultOptions, options);
 		if (!this._initialized) {
 			const errorMessage = "Analytics must be initialized before use.";
 			this._log('error', errorMessage);

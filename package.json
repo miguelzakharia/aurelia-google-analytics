@@ -58,5 +58,8 @@
       "babel": "npm:babel-core@^6.23.1",
       "babel-runtime": "npm:babel-runtime@^6.23.0"
     }
+  },
+  "dependencies": {
+    "deepmerge": "^1.3.2"
   }
 }
