@@ -2,10 +2,10 @@
 
 'use strict';
 
-System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging'], function (_export, _context) {
+System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging', 'deepmerge'], function (_export, _context) {
 	"use strict";
 
-	var inject, EventAggregator, LogManager, _dec, _class, defaultOptions, criteria, delegate, Analytics;
+	var inject, EventAggregator, LogManager, deepmerge, _dec, _class, defaultOptions, criteria, delegate, Analytics;
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -20,6 +20,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 			EventAggregator = _aureliaEventAggregator.EventAggregator;
 		}, function (_aureliaLogging) {
 			LogManager = _aureliaLogging;
+		}, function (_deepmerge) {
+			deepmerge = _deepmerge.default;
 		}],
 		execute: function () {
 			defaultOptions = {
@@ -27,7 +29,10 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					enabled: true
 				},
 				pageTracking: {
-					enabled: false
+					enabled: false,
+					getTitle: function getTitle(payload) {
+						return payload.instruction.config.title;
+					}
 				},
 				clickTracking: {
 					enabled: false,
@@ -87,7 +92,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 				Analytics.prototype.attach = function attach() {
 					var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
 
-					this._options = Object.assign({}, defaultOptions, options);
+					this._options = deepmerge(defaultOptions, options);
 					if (!this._initialized) {
 						var errorMessage = "Analytics must be initialized before use.";
 						this._log('error', errorMessage);
@@ -128,7 +133,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					}
 
 					this._eventAggregator.subscribe('router:navigation:success', function (payload) {
-						return _this._trackPage(payload.instruction.fragment, payload.instruction.config.title);
+						_this._trackPage(payload.instruction.fragment, _this._options.pageTracking.getTitle(payload));
 					});
 				};
 
@@ -157,7 +162,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 						value: element.getAttribute('data-analytics-value')
 					};
 
-					this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value);
+					this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value + '\'');
 					ga('send', 'event', tracking.category, tracking.action, tracking.label, tracking.value);
 				};
 
