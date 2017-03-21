@@ -1,4 +1,4 @@
-define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging'], function (exports, _aureliaDependencyInjection, _aureliaEventAggregator, _aureliaLogging) {
+define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging', 'deepmerge'], function (exports, _aureliaDependencyInjection, _aureliaEventAggregator, _aureliaLogging, _deepmerge) {
 
 	'use strict';
 
@@ -8,6 +8,14 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 	exports.Analytics = undefined;
 
 	var LogManager = _interopRequireWildcard(_aureliaLogging);
+
+	var _deepmerge2 = _interopRequireDefault(_deepmerge);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
 
 	function _interopRequireWildcard(obj) {
 		if (obj && obj.__esModule) {
@@ -39,7 +47,10 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 			enabled: true
 		},
 		pageTracking: {
-			enabled: false
+			enabled: false,
+			getTitle: function getTitle(payload) {
+				return payload.instruction.config.title;
+			}
 		},
 		clickTracking: {
 			enabled: false,
@@ -100,7 +111,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 		Analytics.prototype.attach = function attach() {
 			var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
 
-			this._options = Object.assign({}, defaultOptions, options);
+			this._options = (0, _deepmerge2.default)(defaultOptions, options);
 			if (!this._initialized) {
 				var errorMessage = "Analytics must be initialized before use.";
 				this._log('error', errorMessage);
@@ -141,7 +152,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 			}
 
 			this._eventAggregator.subscribe('router:navigation:success', function (payload) {
-				return _this._trackPage(payload.instruction.fragment, payload.instruction.config.title);
+				_this._trackPage(payload.instruction.fragment, _this._options.pageTracking.getTitle(payload));
 			});
 		};
 
@@ -170,7 +181,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 				value: element.getAttribute('data-analytics-value')
 			};
 
-			this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value);
+			this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value + '\'');
 			ga('send', 'event', tracking.category, tracking.action, tracking.label, tracking.value);
 		};
 

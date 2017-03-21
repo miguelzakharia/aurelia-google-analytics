@@ -17,6 +17,12 @@ var _aureliaLogging = require('aurelia-logging');
 
 var LogManager = _interopRequireWildcard(_aureliaLogging);
 
+var _deepmerge = require('deepmerge');
+
+var _deepmerge2 = _interopRequireDefault(_deepmerge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26,7 +32,10 @@ var defaultOptions = {
 		enabled: true
 	},
 	pageTracking: {
-		enabled: false
+		enabled: false,
+		getTitle: function getTitle(payload) {
+			return payload.instruction.config.title;
+		}
 	},
 	clickTracking: {
 		enabled: false,
@@ -87,7 +96,7 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 	Analytics.prototype.attach = function attach() {
 		var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
 
-		this._options = Object.assign({}, defaultOptions, options);
+		this._options = (0, _deepmerge2.default)(defaultOptions, options);
 		if (!this._initialized) {
 			var errorMessage = "Analytics must be initialized before use.";
 			this._log('error', errorMessage);
@@ -128,7 +137,7 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 		}
 
 		this._eventAggregator.subscribe('router:navigation:success', function (payload) {
-			return _this._trackPage(payload.instruction.fragment, payload.instruction.config.title);
+			_this._trackPage(payload.instruction.fragment, _this._options.pageTracking.getTitle(payload));
 		});
 	};
 
@@ -157,7 +166,7 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 			value: element.getAttribute('data-analytics-value')
 		};
 
-		this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value);
+		this._log('debug', 'click: category \'' + tracking.category + '\', action \'' + tracking.action + '\', label \'' + tracking.label + '\', value \'' + tracking.value + '\'');
 		ga('send', 'event', tracking.category, tracking.action, tracking.label, tracking.value);
 	};
 

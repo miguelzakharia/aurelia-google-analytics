@@ -14,6 +14,7 @@ import {
 	EventAggregator
 } from 'aurelia-event-aggregator';
 import * as LogManager from 'aurelia-logging';
+import deepmerge from 'deepmerge';
 
 /*
 .plugin('aurelia-google-analytics', config => {
@@ -23,7 +24,10 @@ import * as LogManager from 'aurelia-logging';
 					enabled: true
 				},
 				pageTracking: {
-					enabled: true
+					enabled: true,
+					getTitle: function(payload) {
+						return payload.instruction.config.title;
+					}
 				},
 				clickTracking: {
 					enabled: true,
@@ -42,7 +46,10 @@ const defaultOptions = {
 		enabled: true
 	},
 	pageTracking: {
-		enabled: false
+		enabled: false,
+		getTitle: function(payload) {
+			return payload.instruction.config.title;
+		}
 	},
 	clickTracking: {
 		enabled: false,
@@ -105,7 +112,7 @@ export class Analytics {
 	}
 
 	attach(options = defaultOptions) {
-		this._options = Object.assign({}, defaultOptions, options);
+		this._options = deepmerge(defaultOptions, options);
 		if (!this._initialized) {
 			const errorMessage = "Analytics must be initialized before use.";
 			this._log('error', errorMessage);
@@ -148,7 +155,9 @@ export class Analytics {
 		}
 
 		this._eventAggregator.subscribe('router:navigation:success',
-			payload => this._trackPage(payload.instruction.fragment, payload.instruction.config.title));
+			payload => {
+				this._trackPage(payload.instruction.fragment, this._options.pageTracking.getTitle(payload))
+			});
 	}
 
 	_log(level, message) {
