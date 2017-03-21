@@ -1,6 +1,6 @@
 {
   "name": "aurelia-google-analytics",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "An Aurelia plugin that adds Google Analytics page tracking to your application.",
   "keywords": [
     "analytics",
