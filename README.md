@@ -30,6 +30,7 @@ export function configure(aurelia) {
 				clickTracking: {
 					enabled: true // Set to `false` to disable in non-production environments.
 				}
+			});	
 		});
 		
     aurelia.start().then(a => a.setRoot());
