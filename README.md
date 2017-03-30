@@ -36,6 +36,16 @@ export function configure(aurelia) {
     aurelia.start().then(a => a.setRoot());
 }
 ```
+* If you are using [Aurelia CLI](http://aurelia.io/hub.html#/doc/article/aurelia/framework/latest/the-aurelia-cli/10), you need to add following two libraries to your bundle dependencies.
+
+```
+          "deepmerge",
+          {
+            "name": "aurelia-google-analytics",
+            "path": "../node_modules/aurelia-google-analytics/dist/amd",
+            "main": "index"
+          }
+```
 
 In order to use the click tracking feature, each HTML element you want to track must contain a `data-analytics-category` and `data-analytics-action` attribute. `data-analytics-label` and `data-analytics-value` are supported and optional.
 
