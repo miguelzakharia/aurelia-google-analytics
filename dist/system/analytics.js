@@ -5,7 +5,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging', 'deepmerge'], function (_export, _context) {
 	"use strict";
 
-	var inject, EventAggregator, LogManager, deepmerge, _dec, _class, defaultOptions, criteria, delegate, Analytics;
+	var inject, EventAggregator, LogManager, deepmerge, _typeof, _dec, _class, defaultOptions, criteria, delegate, Analytics;
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -24,6 +24,11 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 			deepmerge = _deepmerge.default;
 		}],
 		execute: function () {
+			_typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+				return typeof obj;
+			} : function (obj) {
+				return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+			};
 			defaultOptions = {
 				logging: {
 					enabled: true
@@ -39,6 +44,11 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					filter: function filter(element) {
 						return element instanceof HTMLElement && (element.nodeName.toLowerCase() === 'a' || element.nodeName.toLowerCase() === 'button');
 					}
+				},
+				exceptionTracking: {
+					enabled: true,
+					applicationName: undefined,
+					applicationVersion: undefined
 				}
 			};
 			criteria = {
@@ -101,6 +111,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 
 					this._attachClickTracker();
 					this._attachPageTracker();
+					this._attachExceptionTracker();
 				};
 
 				Analytics.prototype.init = function init(id) {
@@ -135,6 +146,52 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					this._eventAggregator.subscribe('router:navigation:success', function (payload) {
 						_this._trackPage(payload.instruction.fragment, _this._options.pageTracking.getTitle(payload));
 					});
+				};
+
+				Analytics.prototype._attachExceptionTracker = function _attachExceptionTracker() {
+					if (!this._options.exceptionTracking.enabled) {
+						return;
+					}
+
+					var options = this._options;
+					var existingWindowErrorCallback = window.onerror;
+
+					window.onerror = function (errorMessage, url, lineNumber, columnNumber, errorObject) {
+						if (typeof ga === 'function') {
+							var exceptionDescription = void 0;
+							if (errorObject != undefined && _typeof(errorObject.message) != undefined) {
+								exceptionDescription = errorObject.message;
+							} else {
+								exceptionDescription = errorMessage;
+							}
+
+							exceptionDescription += " @ " + url;
+
+							if (lineNumber != undefined && columnNumber != undefined) {
+								exceptionDescription += ":" + lineNumber + ":" + columnNumber;
+							}
+
+							var exOptions = {
+								exDescription: exceptionDescription,
+								exFatal: false
+							};
+
+							if (options.exceptionTracking.applicationName != undefined) {
+								exOptions.appName = options.exceptionTracking.applicationName;
+							}
+							if (options.exceptionTracking.applicationVersion != undefined) {
+								exOptions.appVersion = options.exceptionTracking.applicationVersion;
+							}
+
+							ga('send', 'exception', exOptions);
+						}
+
+						if (typeof existingWindowErrorCallback === 'function') {
+							return existingWindowErrorCallback(errorMessage, url, lineNumber, columnNumber, errorObject);
+						}
+
+						return false;
+					};
 				};
 
 				Analytics.prototype._log = function _log(level, message) {

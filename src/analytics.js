@@ -58,6 +58,11 @@ const defaultOptions = {
 				(element.nodeName.toLowerCase() === 'a' ||
 					element.nodeName.toLowerCase() === 'button');
 		}
+	},
+	exceptionTracking: {
+		enabled: true,
+		applicationName: undefined,
+		applicationVersion: undefined
 	}
 };
 
@@ -121,6 +126,7 @@ export class Analytics {
 
 		this._attachClickTracker();
 		this._attachPageTracker();
+		this._attachExceptionTracker();
 	}
 
 	init(id) {
@@ -158,6 +164,54 @@ export class Analytics {
 			payload => {
 				this._trackPage(payload.instruction.fragment, this._options.pageTracking.getTitle(payload))
 			});
+	}
+
+	_attachExceptionTracker() {
+		if (!this._options.exceptionTracking.enabled) {
+			return;
+		}
+
+		let options = this._options;
+		let existingWindowErrorCallback = window.onerror;
+
+		window.onerror = function (errorMessage, url, lineNumber, columnNumber, errorObject) {
+			// Send error details to Google Analytics, if library has loaded.
+			if (typeof ga === 'function') {
+				let exceptionDescription;
+				if (errorObject != undefined && typeof errorObject.message != undefined) {
+					exceptionDescription = errorObject.message;
+				} else {
+					exceptionDescription = errorMessage;
+				}
+
+				exceptionDescription += " @ " + url;
+				// Include additional details if available.
+				if (lineNumber != undefined && columnNumber != undefined) {
+					exceptionDescription += ":" + lineNumber + ":" + columnNumber;
+				}
+
+				let exOptions = {
+					exDescription: exceptionDescription,
+					exFatal: false
+				};
+
+				if (options.exceptionTracking.applicationName != undefined) {
+					exOptions.appName = options.exceptionTracking.applicationName;
+				}
+				if (options.exceptionTracking.applicationVersion != undefined) {
+					exOptions.appVersion = options.exceptionTracking.applicationVersion;
+				}
+
+				ga('send', 'exception', exOptions);
+			}
+
+			if (typeof existingWindowErrorCallback === 'function') {
+				return existingWindowErrorCallback(errorMessage, url, lineNumber, columnNumber, errorObject);
+			}
+
+			// Otherwise continue with the error.
+			return false;
+		};
 	}
 
 	_log(level, message) {
