@@ -29,6 +29,9 @@ export function configure(aurelia) {
 				},
 				clickTracking: {
 					enabled: true // Set to `false` to disable in non-production environments.
+				},
+				exceptionTracking: {
+					enabled: true // Set to `false` to disable in non-production environments.
 				}
 			});	
 		});
