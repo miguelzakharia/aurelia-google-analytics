@@ -129,7 +129,7 @@ export class Analytics {
 		this._attachExceptionTracker();
 	}
 
-	init(id) {
+	init(id, options) {
 		const script = document.createElement('script');
 		script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" +
 			"(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," +
@@ -141,7 +141,7 @@ export class Analytics {
 			(ga.q = ga.q || []).push(arguments)
 		};
 		ga.l = +new Date;
-		ga('create', id, 'auto');
+		ga('create', id, 'auto', options);
 
 		this._initialized = true;
 	}
