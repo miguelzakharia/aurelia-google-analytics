@@ -27,6 +27,9 @@ import deepmerge from 'deepmerge';
 					enabled: true,
 					getTitle: function(payload) {
 						return payload.instruction.config.title;
+					},
+					getUrl: payload => {
+						return payload.instruction.fragment;
 					}
 				},
 				clickTracking: {
@@ -40,31 +43,6 @@ import deepmerge from 'deepmerge';
 			});
 		})
 */
-
-const defaultOptions = {
-	logging: {
-		enabled: true
-	},
-	pageTracking: {
-		enabled: false,
-		getTitle: function(payload) {
-			return payload.instruction.config.title;
-		}
-	},
-	clickTracking: {
-		enabled: false,
-		filter: function(element) {
-			return element instanceof HTMLElement &&
-				(element.nodeName.toLowerCase() === 'a' ||
-					element.nodeName.toLowerCase() === 'button');
-		}
-	},
-	exceptionTracking: {
-		enabled: true,
-		applicationName: undefined,
-		applicationVersion: undefined
-	}
-};
 
 const criteria = {
 	isElement: function (e) {
@@ -88,6 +66,32 @@ const criteria = {
 	},
 	isButton: function (e) {
 		return criteria.isOfType(e, 'button');
+	}
+};
+
+const defaultOptions = {
+	logging: {
+		enabled: true
+	},
+	pageTracking: {
+		enabled: false,
+		getTitle: (payload) => {
+			return payload.instruction.config.title;
+		},
+		getUrl: (payload) => {
+			return payload.instruction.fragment;
+		}
+	},
+	clickTracking: {
+		enabled: false,
+		filter: (element) => {
+			return criteria.isAnchor(element) || criteria.isButton(element);
+		}
+	},
+	exceptionTracking: {
+		enabled: true,
+		applicationName: undefined,
+		applicationVersion: undefined
 	}
 };
 
@@ -162,7 +166,7 @@ export class Analytics {
 
 		this._eventAggregator.subscribe('router:navigation:success',
 			payload => {
-				this._trackPage(payload.instruction.fragment, this._options.pageTracking.getTitle(payload))
+				this._trackPage(this._options.pageTracking.getUrl(payload), this._options.pageTracking.getTitle(payload))
 			});
 	}
 

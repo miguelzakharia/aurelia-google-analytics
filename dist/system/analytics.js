@@ -5,7 +5,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'aurelia-logging', 'deepmerge'], function (_export, _context) {
 	"use strict";
 
-	var inject, EventAggregator, LogManager, deepmerge, _typeof, _dec, _class, defaultOptions, criteria, delegate, Analytics;
+	var inject, EventAggregator, LogManager, deepmerge, _typeof, _dec, _class, criteria, defaultOptions, delegate, Analytics;
 
 	function _classCallCheck(instance, Constructor) {
 		if (!(instance instanceof Constructor)) {
@@ -29,28 +29,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 			} : function (obj) {
 				return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 			};
-			defaultOptions = {
-				logging: {
-					enabled: true
-				},
-				pageTracking: {
-					enabled: false,
-					getTitle: function getTitle(payload) {
-						return payload.instruction.config.title;
-					}
-				},
-				clickTracking: {
-					enabled: false,
-					filter: function filter(element) {
-						return element instanceof HTMLElement && (element.nodeName.toLowerCase() === 'a' || element.nodeName.toLowerCase() === 'button');
-					}
-				},
-				exceptionTracking: {
-					enabled: true,
-					applicationName: undefined,
-					applicationVersion: undefined
-				}
-			};
 			criteria = {
 				isElement: function isElement(e) {
 					return e instanceof HTMLElement;
@@ -71,6 +49,31 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 				},
 				isButton: function isButton(e) {
 					return criteria.isOfType(e, 'button');
+				}
+			};
+			defaultOptions = {
+				logging: {
+					enabled: true
+				},
+				pageTracking: {
+					enabled: false,
+					getTitle: function getTitle(payload) {
+						return payload.instruction.config.title;
+					},
+					getUrl: function getUrl(payload) {
+						return payload.instruction.fragment;
+					}
+				},
+				clickTracking: {
+					enabled: false,
+					filter: function filter(element) {
+						return criteria.isAnchor(element) || criteria.isButton(element);
+					}
+				},
+				exceptionTracking: {
+					enabled: true,
+					applicationName: undefined,
+					applicationVersion: undefined
 				}
 			};
 
@@ -144,7 +147,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 					}
 
 					this._eventAggregator.subscribe('router:navigation:success', function (payload) {
-						_this._trackPage(payload.instruction.fragment, _this._options.pageTracking.getTitle(payload));
+						_this._trackPage(_this._options.pageTracking.getUrl(payload), _this._options.pageTracking.getTitle(payload));
 					});
 				};
 

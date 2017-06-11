@@ -48,29 +48,6 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 
 	var _dec, _class;
 
-	var defaultOptions = {
-		logging: {
-			enabled: true
-		},
-		pageTracking: {
-			enabled: false,
-			getTitle: function getTitle(payload) {
-				return payload.instruction.config.title;
-			}
-		},
-		clickTracking: {
-			enabled: false,
-			filter: function filter(element) {
-				return element instanceof HTMLElement && (element.nodeName.toLowerCase() === 'a' || element.nodeName.toLowerCase() === 'button');
-			}
-		},
-		exceptionTracking: {
-			enabled: true,
-			applicationName: undefined,
-			applicationVersion: undefined
-		}
-	};
-
 	var criteria = {
 		isElement: function isElement(e) {
 			return e instanceof HTMLElement;
@@ -91,6 +68,32 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 		},
 		isButton: function isButton(e) {
 			return criteria.isOfType(e, 'button');
+		}
+	};
+
+	var defaultOptions = {
+		logging: {
+			enabled: true
+		},
+		pageTracking: {
+			enabled: false,
+			getTitle: function getTitle(payload) {
+				return payload.instruction.config.title;
+			},
+			getUrl: function getUrl(payload) {
+				return payload.instruction.fragment;
+			}
+		},
+		clickTracking: {
+			enabled: false,
+			filter: function filter(element) {
+				return criteria.isAnchor(element) || criteria.isButton(element);
+			}
+		},
+		exceptionTracking: {
+			enabled: true,
+			applicationName: undefined,
+			applicationVersion: undefined
 		}
 	};
 
@@ -164,7 +167,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 			}
 
 			this._eventAggregator.subscribe('router:navigation:success', function (payload) {
-				_this._trackPage(payload.instruction.fragment, _this._options.pageTracking.getTitle(payload));
+				_this._trackPage(_this._options.pageTracking.getUrl(payload), _this._options.pageTracking.getTitle(payload));
 			});
 		};
 
