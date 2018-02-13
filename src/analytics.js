@@ -73,6 +73,9 @@ const defaultOptions = {
 	logging: {
 		enabled: true
 	},
+	anonymizeIp: {
+		enabled: false
+	},
 	pageTracking: {
 		enabled: false,
 		getTitle: (payload) => {
@@ -128,6 +131,7 @@ export class Analytics {
 			throw new Error(errorMessage);
 		}
 
+		this._attachAnonymizeIp();
 		this._attachClickTracker();
 		this._attachPageTracker();
 		this._attachExceptionTracker();
@@ -148,6 +152,14 @@ export class Analytics {
 		ga('create', id, 'auto');
 
 		this._initialized = true;
+	}
+
+	_attachAnonymizeIp() {
+		if (!this._options.anonymizeIp.enabled) {
+			return;
+		}
+
+		ga('set', 'anonymizeIP', true);
 	}
 
 	_attachClickTracker() {
