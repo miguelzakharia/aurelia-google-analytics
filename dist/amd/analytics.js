@@ -75,6 +75,9 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 		logging: {
 			enabled: true
 		},
+		anonymizeIp: {
+			enabled: false
+		},
 		pageTracking: {
 			enabled: false,
 			getTitle: function getTitle(payload) {
@@ -132,6 +135,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 				throw new Error(errorMessage);
 			}
 
+			this._attachAnonymizeIp();
 			this._attachClickTracker();
 			this._attachPageTracker();
 			this._attachExceptionTracker();
@@ -149,6 +153,14 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 			ga('create', id, 'auto');
 
 			this._initialized = true;
+		};
+
+		Analytics.prototype._attachAnonymizeIp = function _attachAnonymizeIp() {
+			if (!this._options.anonymizeIp.enabled) {
+				return;
+			}
+
+			ga('set', 'anonymizeIP', true);
 		};
 
 		Analytics.prototype._attachClickTracker = function _attachClickTracker() {
