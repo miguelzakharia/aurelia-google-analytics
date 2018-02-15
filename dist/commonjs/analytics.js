@@ -116,7 +116,6 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 			throw new Error(errorMessage);
 		}
 
-		this._attachAnonymizeIp();
 		this._attachClickTracker();
 		this._attachPageTracker();
 		this._attachExceptionTracker();
@@ -134,14 +133,6 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 		ga('create', id, 'auto');
 
 		this._initialized = true;
-	};
-
-	Analytics.prototype._attachAnonymizeIp = function _attachAnonymizeIp() {
-		if (!this._options.anonymizeIp.enabled) {
-			return;
-		}
-
-		ga('set', 'anonymizeIP', true);
 	};
 
 	Analytics.prototype._attachClickTracker = function _attachClickTracker() {
@@ -248,7 +239,8 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 
 		ga('set', {
 			page: path,
-			title: title
+			title: title,
+			anonymizeIp: this._options.anonymizeIp.enabled
 		});
 		ga('send', 'pageview');
 	};

@@ -131,7 +131,6 @@ export class Analytics {
 			throw new Error(errorMessage);
 		}
 
-		this._attachAnonymizeIp();
 		this._attachClickTracker();
 		this._attachPageTracker();
 		this._attachExceptionTracker();
@@ -152,14 +151,6 @@ export class Analytics {
 		ga('create', id, 'auto');
 
 		this._initialized = true;
-	}
-
-	_attachAnonymizeIp() {
-		if (!this._options.anonymizeIp.enabled) {
-			return;
-		}
-
-		ga('set', 'anonymizeIP', true);
 	}
 
 	_attachClickTracker() {
@@ -268,7 +259,8 @@ export class Analytics {
 
 		ga('set', {
 			page: path,
-			title: title
+			title: title,
+			anonymizeIp: this._options.anonymizeIp.enabled
 		});
 		ga('send', 'pageview');
 	}
