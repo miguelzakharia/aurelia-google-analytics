@@ -56,6 +56,9 @@ var defaultOptions = {
 	logging: {
 		enabled: true
 	},
+	anonymizeIp: {
+		enabled: false
+	},
 	pageTracking: {
 		enabled: false,
 		getTitle: function getTitle(payload) {
@@ -236,7 +239,8 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 
 		ga('set', {
 			page: path,
-			title: title
+			title: title,
+			anonymizeIp: this._options.anonymizeIp.enabled
 		});
 		ga('send', 'pageview');
 	};

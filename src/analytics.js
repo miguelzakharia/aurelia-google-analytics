@@ -73,6 +73,9 @@ const defaultOptions = {
 	logging: {
 		enabled: true
 	},
+	anonymizeIp: {
+		enabled: false
+	},
 	pageTracking: {
 		enabled: false,
 		getTitle: (payload) => {
@@ -256,7 +259,8 @@ export class Analytics {
 
 		ga('set', {
 			page: path,
-			title: title
+			title: title,
+			anonymizeIp: this._options.anonymizeIp.enabled
 		});
 		ga('send', 'pageview');
 	}

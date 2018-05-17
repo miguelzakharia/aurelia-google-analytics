@@ -75,6 +75,9 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 		logging: {
 			enabled: true
 		},
+		anonymizeIp: {
+			enabled: false
+		},
 		pageTracking: {
 			enabled: false,
 			getTitle: function getTitle(payload) {
@@ -255,7 +258,8 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-event-aggregator', '
 
 			ga('set', {
 				page: path,
-				title: title
+				title: title,
+				anonymizeIp: this._options.anonymizeIp.enabled
 			});
 			ga('send', 'pageview');
 		};

@@ -55,6 +55,9 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 				logging: {
 					enabled: true
 				},
+				anonymizeIp: {
+					enabled: false
+				},
 				pageTracking: {
 					enabled: false,
 					getTitle: function getTitle(payload) {
@@ -235,7 +238,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-event-aggregator', 'au
 
 					ga('set', {
 						page: path,
-						title: title
+						title: title,
+						anonymizeIp: this._options.anonymizeIp.enabled
 					});
 					ga('send', 'pageview');
 				};
