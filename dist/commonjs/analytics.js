@@ -31,7 +31,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var criteria = {
 	isElement: function isElement(e) {
-		return e instanceof HTMLElement;
+		return e instanceof Element;
 	},
 	hasClass: function hasClass(cls) {
 		return function (e) {
@@ -49,6 +49,12 @@ var criteria = {
 	},
 	isButton: function isButton(e) {
 		return criteria.isOfType(e, 'button');
+	},
+	isImg: function isImg(e) {
+		return criteria.isOfType(e, 'img');
+	},
+	isSvg: function isSvg(e) {
+		return criteria.isOfType(e, 'svg') || criteria.isOfType(e.parentNode, 'svg');
 	}
 };
 
@@ -78,11 +84,13 @@ var defaultOptions = {
 	}
 };
 
-var delegate = function delegate(criteria, listener) {
+var delegate = function delegate(filter, listener) {
 	return function (evt) {
 		var el = evt.target;
 		do {
-			if (criteria && !criteria(el)) continue;
+			if (filter && !filter(el)) {
+				continue;
+			}
 			evt.delegateTarget = el;
 			listener.apply(this, arguments);
 			return;
@@ -108,7 +116,7 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 
 		this._options = (0, _deepmerge2.default)(defaultOptions, options);
 		if (!this._initialized) {
-			var errorMessage = "Analytics must be initialized before use.";
+			var errorMessage = 'Analytics must be initialized before use.';
 			this._log('error', errorMessage);
 			throw new Error(errorMessage);
 		}
@@ -120,7 +128,7 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 
 	Analytics.prototype.init = function init(id) {
 		var script = document.createElement('script');
-		script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" + "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o)," + "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)" + "})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');";
+		script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){" + '(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),' + 'm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)' + "})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');";
 		document.querySelector('body').appendChild(script);
 
 		window.ga = window.ga || function () {
@@ -169,10 +177,10 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 					exceptionDescription = errorMessage;
 				}
 
-				exceptionDescription += " @ " + url;
+				exceptionDescription += ' @ ' + url;
 
 				if (lineNumber != undefined && columnNumber != undefined) {
-					exceptionDescription += ":" + lineNumber + ":" + columnNumber;
+					exceptionDescription += ':' + lineNumber + ':' + columnNumber;
 				}
 
 				var exOptions = {
@@ -211,11 +219,15 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 			this._log('warn', "The component has not been initialized. Please call 'init()' before calling 'attach()'.");
 			return;
 		}
-		if (!evt || !evt.delegateTarget || !criteria.hasTrackingInfo(evt.delegateTarget)) {
+		if (!evt || !evt.delegateTarget) {
 			return;
-		};
+		}
 
-		var element = evt.delegateTarget;
+		var element = this._unwrap(evt.delegateTarget);
+		if (!criteria.hasTrackingInfo(element)) {
+			return;
+		}
+
 		var tracking = {
 			category: element.getAttribute('data-analytics-category'),
 			action: element.getAttribute('data-analytics-action'),
@@ -239,6 +251,14 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 			title: title
 		});
 		ga('send', 'pageview');
+	};
+
+	Analytics.prototype._unwrap = function _unwrap(element) {
+		if (criteria.isSvg(element)) {
+			return criteria.isOfType(element, 'svg') ? element : element.parentNode;
+		}
+
+		return element;
 	};
 
 	return Analytics;

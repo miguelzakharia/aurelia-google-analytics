@@ -1,66 +1,62 @@
 {
-  "name": "aurelia-google-analytics",
-  "version": "2.3.1",
-  "description": "An Aurelia plugin that adds Google Analytics page tracking to your application.",
-  "keywords": [
-    "analytics",
-    "tracking",
-    "aurelia"
-  ],
-  "homepage": "https://github.com/miguelzakharia/aurelia-google-analytics",
-  "bugs": {
-    "url": "https://github.com/miguelzakharia/aurelia-google-analytics/issues"
-  },
-  "license": "MIT",
-  "author": "Miguel Zakharia <miguel@zakharia.me> (http://miguel.zakharia.me)",
-  "main": "dist/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/miguelzakharia/aurelia-google-analytics"
-  },
-  "devDependencies": {
-    "aurelia-tools": "^1.0.0",
-    "babel-plugin-syntax-flow": "^6.8.0",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-es2015-modules-amd": "^6.8.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
-    "babel-plugin-transform-es2015-modules-systemjs": "^6.11.6",
-    "babel-plugin-transform-flow-strip-types": "^6.8.0",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-es2015-loose": "^7.0.0",
-    "babel-preset-stage-1": "^6.5.0",
-    "del": "^2.2.1",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-bump": "^2.2.0",
-    "gulp-jshint": "^1.9.0",
-    "gulp-yuidoc": "^0.1.2",
-    "jshint-stylish": "^1.0.0",
-    "object.assign": "^4.0.4",
-    "require-dir": "^0.3.0",
-    "run-sequence": "^1.2.2",
-    "vinyl-paths": "^2.1.0",
-    "yargs": "^4.8.1",
-    "conventional-changelog": "^1.1.0"
-  },
-  "jspm": {
-    "main": "index",
-    "format": "amd",
-    "directories": {
-      "lib": "dist/amd"
-    },
-    "dependencies": {
-      "aurelia-dependency-injection": "npm:aurelia-dependency-injection@^1.3.0",
-      "aurelia-event-aggregator": "npm:aurelia-event-aggregator@^1.0.1",
-      "aurelia-logging": "npm:aurelia-logging@^1.2.0",
+	"name": "aurelia-google-analytics",
+	"version": "2.5.0-alpha.1",
+	"description": "An Aurelia plugin that adds Google Analytics page tracking to your application.",
+	"keywords": ["analytics", "tracking", "aurelia"],
+	"homepage": "https://github.com/miguelzakharia/aurelia-google-analytics",
+	"bugs": {
+		"url": "https://github.com/miguelzakharia/aurelia-google-analytics/issues"
+	},
+	"license": "MIT",
+	"author": "Miguel Zakharia <miguel@zakharia.me> (http://miguel.zakharia.me)",
+	"main": "dist/index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/miguelzakharia/aurelia-google-analytics"
+	},
+	"devDependencies": {
+		"aurelia-tools": "^1.0.0",
+		"babel-plugin-syntax-flow": "^6.8.0",
+		"babel-plugin-transform-decorators-legacy": "^1.3.4",
+		"babel-plugin-transform-es2015-modules-amd": "^6.8.0",
+		"babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
+		"babel-plugin-transform-es2015-modules-systemjs": "^6.11.6",
+		"babel-plugin-transform-flow-strip-types": "^6.8.0",
+		"babel-preset-es2015": "^6.9.0",
+		"babel-preset-es2015-loose": "^7.0.0",
+		"babel-preset-stage-1": "^6.5.0",
+		"del": "^2.2.1",
+		"gulp": "^3.9.1",
+		"gulp-babel": "^6.1.2",
+		"gulp-bump": "^2.2.0",
+		"gulp-jshint": "^1.9.0",
+		"gulp-yuidoc": "^0.1.2",
+		"jshint-stylish": "^1.0.0",
+		"object.assign": "^4.0.4",
+		"require-dir": "^0.3.2",
+		"run-sequence": "^1.2.2",
+		"vinyl-paths": "^2.1.0",
+		"yargs": "^4.8.1",
+		"conventional-changelog": "^1.1.0"
+	},
+	"jspm": {
+		"main": "index",
+		"format": "amd",
+		"directories": {
+			"lib": "dist/amd"
+		},
+		"dependencies": {
+			"aurelia-dependency-injection": "npm:aurelia-dependency-injection@^1.3.0",
+			"aurelia-event-aggregator": "npm:aurelia-event-aggregator@^1.0.1",
+			"aurelia-logging": "npm:aurelia-logging@^1.2.0",
 			"deepmerge": "npm:deepmerge@^1.3.2"
-    },
-    "devDependencies": {
-      "babel": "npm:babel-core@^6.23.1",
-      "babel-runtime": "npm:babel-runtime@^6.23.0"
-    }
-  },
-  "dependencies": {
-    "deepmerge": "^1.3.2"
-  }
+		},
+		"devDependencies": {
+			"babel": "npm:babel-core@^6.23.1",
+			"babel-runtime": "npm:babel-runtime@^6.23.0"
+		}
+	},
+	"dependencies": {
+		"deepmerge": "^1.3.2"
+	}
 }
