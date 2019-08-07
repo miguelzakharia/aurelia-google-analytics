@@ -25,6 +25,11 @@ import deepmerge from 'deepmerge';
 				},
 				pageTracking: {
 					enabled: true,
+					ignore: {
+						fragments: [],
+						routes: [],
+						routeNames: []
+					},
 					getTitle: function(payload) {
 						return payload.instruction.config.title;
 					},
@@ -78,6 +83,11 @@ const defaultOptions = {
 	},
 	pageTracking: {
 		enabled: false,
+		ignore: {
+			fragments: [],
+			routes: [],
+			routeNames: []
+		},
 		getTitle: (payload) => {
 			return payload.instruction.config.title;
 		},
@@ -169,6 +179,16 @@ export class Analytics {
 
 		this._eventAggregator.subscribe('router:navigation:success',
 			payload => {
+				if (
+					// Ignore page fragments
+					this._options.pageTracking.ignore.fragments.some((fragment) => payload.instruction.fragment.includes(fragment))
+					// Ignore routes
+					|| this._options.pageTracking.ignore.routes.some((route) => payload.instruction.config.route === route)
+					// Ignore route names
+					|| this._options.pageTracking.ignore.routeNames.some((routeName) => payload.instruction.config.name === routeName)
+					)
+					return;
+
 				this._trackPage(this._options.pageTracking.getUrl(payload), this._options.pageTracking.getTitle(payload))
 			});
 	}

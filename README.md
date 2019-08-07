@@ -28,6 +28,12 @@ export function configure(aurelia) {
 			pageTracking: {
 				// Set to `false` to disable in non-production environments.
 				enabled: true,
+				// Configure fragments/routes/route names to ignore page tracking for
+				ignore: {
+					fragments: [], // Ignore a route fragment, login fragment for example: ['/login']
+					routes: [], // Ignore a route, login route for example: ['login']
+					routeNames: [] // Ignore a route name, login route name for example: ['login-route']
+				},
 				// Optional. By default it gets the title from payload.instruction.config.title.
 				getTitle: (payload) => {
 					// For example, if you want to retrieve the tile from the document instead override with the following.
