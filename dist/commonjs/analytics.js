@@ -61,6 +61,11 @@ var defaultOptions = {
 	},
 	pageTracking: {
 		enabled: false,
+		ignore: {
+			fragments: [],
+			routes: [],
+			routeNames: []
+		},
 		getTitle: function getTitle(payload) {
 			return payload.instruction.config.title;
 		},
@@ -151,6 +156,14 @@ var Analytics = exports.Analytics = (_dec = (0, _aureliaDependencyInjection.inje
 		}
 
 		this._eventAggregator.subscribe('router:navigation:success', function (payload) {
+			if (_this._options.pageTracking.ignore.fragments.some(function (fragment) {
+				return payload.instruction.fragment.includes(fragment);
+			}) || _this._options.pageTracking.ignore.routes.some(function (route) {
+				return payload.instruction.config.route === route;
+			}) || _this._options.pageTracking.ignore.routeNames.some(function (routeName) {
+				return payload.instruction.config.name === routeName;
+			})) return;
+
 			_this._trackPage(_this._options.pageTracking.getUrl(payload), _this._options.pageTracking.getTitle(payload));
 		});
 	};
