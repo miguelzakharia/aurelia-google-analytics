@@ -20,7 +20,7 @@ npm install aurelia-google-analytics --save
 export function configure(aurelia) {
 	aurelia.use.plugin('aurelia-google-analytics', config => {
 		config.init('<Your Tracker ID>');
-		config.attach({
+		const options = {
 			logging: {
 				// Set to `true` to have some log messages appear in the browser console.
 				enabled: true
@@ -61,7 +61,8 @@ export function configure(aurelia) {
 				// Set to `false` to disable in non-production environments.
 				enabled: true
 			}
-		});
+		};
+		config.attach(options);
 	});
 
 	aurelia.start().then(a => a.setRoot());
@@ -79,6 +80,90 @@ export function configure(aurelia) {
 ```
 
 In order to use the click tracking feature, each HTML element you want to track must contain a `data-analytics-category` and `data-analytics-action` attribute. `data-analytics-label` and `data-analytics-value` are supported and optional.
+
+
+### Alternative trackings
+
+For custom trackings, for example, if you want to use the simplicity of the `aurelia-google-analytics` but tracking using Google Tag Manager (GTM) ou similars, you can use custom functions passing these function in `options`.
+
+In this case, see options below:
+
+`options.useNativeGaScript` _(default: true)_
+
+Passing `false` in this option to disable native script of GA. The `aurelia-google-analytics` don't load the `<script>` tag to Google Analytics (GA). It's good when you load GA from GTM for example.
+
+With this option disabled, the `aurelia-google-analytics` automatically set internal lib as `loaded`, so you don't need to execute `config.init`.
+
+
+`options.pageTracking.customFnTrack` _(default: false)_
+
+You can pass a function in this option to customize the tracking of pages. For example, if you use GTM, perhaps do you want to track events sending data to you `dataLayer` variable.
+
+For example:
+
+```javascript
+
+const options = {
+	// ...
+	pageTracking: {
+		customFnTrack: (props) => {
+			console.log(props);
+			/*
+			prints in console:
+			{ 
+				page: '',
+				title: '',
+				anonymizeIp: true/false
+			}
+			*/
+			window.dataLayer = window.dataLayer || [];
+			window.dataLayer.push(Object.assign(
+				{
+				event: 'virtual-page-tracking',
+				},
+				props
+			));
+		}
+	}
+	// ...
+}
+```
+
+`options.clickTracking.customFnTrack` _(default: false)_
+
+Same of `options.pageTracking.customFnTrack`, but for links.
+
+For example:
+
+
+```javascript
+
+const options = {
+	// ...
+	clickTracking: {
+		customFnTrack: (props) => {
+			console.log(props);
+			/*
+			prints in console:
+			{ 
+				category: // value of atribute 'data-analytics-category',
+				action: // value of atribute 'data-analytics-action',
+				label: // value of atribute 'data-analytics-label',
+				value: // value of atribute 'data-analytics-value'
+			}
+			*/
+			window.dataLayer = window.dataLayer || [];
+			window.dataLayer.push(Object.assign(
+				{
+				event: 'ga-event',
+				},
+				props
+			));
+		}
+	}
+	// ...
+}
+```
 
 ## Building from source
 
