@@ -18,7 +18,6 @@ import deepmerge from 'deepmerge';
 
 /*
 .plugin('aurelia-google-analytics', config => {
-			config.init('<Tracker ID here>');
 			config.attach({
 				customTracking: {
 					useNativeGaScript: true
@@ -49,6 +48,7 @@ import deepmerge from 'deepmerge';
 					}
 				}
 			});
+			config.init('<Tracker ID here>');
 		})
 */
 
