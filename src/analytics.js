@@ -138,14 +138,15 @@ export class Analytics {
 
 		this._trackClick = this._trackClick.bind(this);
 		this._trackPage = this._trackPage.bind(this);
-
-		if (!this._options.useNativeGaScript) {
-			this._initialized = true;
-		}
 	}
 
 	attach(options = defaultOptions) {
 		this._options = deepmerge(defaultOptions, options);
+
+		if (!this._options.useNativeGaScript) {
+			this._initialized = true;
+		}
+		
 		if (!this._initialized) {
 			const errorMessage = "Analytics must be initialized before use.";
 			this._log('error', errorMessage);
