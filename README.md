@@ -19,7 +19,6 @@ npm install aurelia-google-analytics --save
 ```javascript
 export function configure(aurelia) {
 	aurelia.use.plugin('aurelia-google-analytics', config => {
-		config.init('<Your Tracker ID>');
 		const options = {
 			logging: {
 				// Set to `true` to have some log messages appear in the browser console.
@@ -63,6 +62,7 @@ export function configure(aurelia) {
 			}
 		};
 		config.attach(options);
+		config.init('<Your Tracker ID>');
 	});
 
 	aurelia.start().then(a => a.setRoot());
